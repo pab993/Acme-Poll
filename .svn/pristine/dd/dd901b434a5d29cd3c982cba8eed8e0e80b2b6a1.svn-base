@@ -1,0 +1,33 @@
+
+package services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.PollRepository;
+import domain.Poll;
+
+@Service
+@Transactional
+public class PollService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private PollRepository	pollRepository;
+
+
+	//Simple CRUD methods ============================================================================
+
+	public Poll findOne(int id) {
+		Poll poll;
+
+		poll = pollRepository.findOne(id);
+		Assert.notNull(poll);
+
+		return poll;
+	}
+
+}

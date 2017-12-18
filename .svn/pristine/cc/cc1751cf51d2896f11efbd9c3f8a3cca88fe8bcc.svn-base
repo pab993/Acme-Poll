@@ -1,0 +1,48 @@
+
+package controllers;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import services.PollService;
+import services.PollerService;
+import domain.Poll;
+import domain.Poller;
+
+@Controller
+@RequestMapping("/poll")
+public class PollController extends AbstractController {
+
+	//Services =======================================================================
+
+	@Autowired
+	private PollService		pollService;
+
+	@Autowired
+	private PollerService	pollerService;
+
+
+	//Listing ========================================================================
+
+	@RequestMapping(value = "/myList", method = RequestMethod.GET)
+	public ModelAndView myList() {
+		ModelAndView result;
+		Collection<Poll> polls;
+
+		Poller poller = pollerService.findByPrincipal();
+
+		polls = pollService.findAllMyPolls(poller.getId());
+
+		result = new ModelAndView("poll/list");
+		result.addObject("polls", polls);
+		result.addObject("requestURI", "poll/myList.do");
+
+		return result;
+	}
+
+}

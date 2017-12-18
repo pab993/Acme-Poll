@@ -1,0 +1,34 @@
+# messages_es.properties
+#
+# Copyright (C) 2017 Universidad de Sevilla
+# 
+# The use of this project is hereby constrained to the conditions of the 
+# TDG Licence, a copy of which you may download from 
+# http://www.tdg-seville.info/License.html
+
+
+poll.banner					=	Imagen
+poll.title					=	Título
+poll.description			=	Descripción
+poll.endActive				=	Fin de la encuesta
+poll.startActive			=	Comienzo de la encuesta
+poll.ticker					=	Identificador
+
+poll.cancel					=	Volver a la página principal
+poll.cancel.list			= 	Volver a la lista de encuestas
+poll.cancel.myList			=	Volver a mis encuestas
+
+poll.info					=	Información general
+poll.submit					=	Completar
+poll.save					=	Guardar
+poll.delete					=	Eliminar
+poll.confirm				=	¿Estás seguro de eliminar esta encuesta?
+poll.edit					=	Editar
+
+poll.display				= 	Hacer encuesta
+poll.commit.error			=	Deben responderse todas las preguntas.
+poll.commit.error.2			= 	No se ha podido realizar esta operación
+
+poll.dates.inverted.1		=	La fecha de inicio debe ser menor que la fecha de fin.
+poll.dates.inverted.2		=	La fecha fin debe ser mayor que la fecha de inicio.
+poll.endDate.minimum		=	El periodo activo de esta encuesta es muy pequeño

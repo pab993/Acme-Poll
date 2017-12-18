@@ -1,0 +1,33 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import repositories.AnswerRepository;
+import domain.Answer;
+
+@Service
+@Transactional
+public class AnswerService {
+
+	//Managed repository
+
+	@Autowired
+	private AnswerRepository	answerRepository;
+
+
+	//Other bussiness methods
+
+	public Collection<Answer> findAnswersOfAPoll(int pollId) {
+		Collection<Answer> answers;
+
+		answers = answerRepository.findAnswersOfAPoll(pollId);
+
+		return answers;
+	}
+
+}

@@ -1,0 +1,113 @@
+
+package services;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.PollRepository;
+import domain.Instance;
+import domain.Poll;
+import domain.Poller;
+import domain.Question;
+
+@Service
+@Transactional
+public class PollService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private PollRepository	pollRepository;
+
+	//Services =======================================================================================
+
+	@Autowired
+	private PollerService	pollerService;
+
+
+	//Simple CRUD methods ============================================================================
+
+	public Poll findOne(int id) {
+		Poll poll;
+
+		poll = pollRepository.findOne(id);
+		Assert.notNull(poll);
+
+		return poll;
+	}
+
+	public Poll create() {
+		Poll result;
+
+		Poller poller = pollerService.findByPrincipal();
+
+		Assert.isTrue(poller != null);
+
+		result = new Poll();
+
+		Collection<Question> questions = new ArrayList<Question>();
+		Collection<Instance> instances = new ArrayList<Instance>();
+		result.setQuestions(questions);
+		result.setInstances(instances);
+		result.setPoller(poller);
+
+		return result;
+	}
+
+	public Poll save(Poll poll) {
+		Assert.notNull(poll);
+
+		Poller poller = pollerService.findByPrincipal();
+
+		Assert.isTrue(poll.getPoller().getId() == poller.getId());
+		Poll result;
+
+		poll.setTicker(codeGenerator());
+
+		result = pollRepository.save(poll);
+
+		return result;
+	}
+
+	public void delete(Poll poll) {
+		Assert.notNull(poll);
+
+		Poller poller = pollerService.findByPrincipal();
+
+		Assert.isTrue(poll.getPoller().getId() == poller.getId());
+
+		pollRepository.delete(poll);
+	}
+
+	//Other bussiness methods ===========================================================================================
+
+	public String codeGenerator() {
+		String result = "";
+		final String pattern = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"; //54
+		final String pattern2 = "0123456789";
+		final Random rnd = new Random();
+		//		final int nRnd = TracksonService.generaNumeroAleatorio(3);
+		//		final int nRnd2 = TracksonService.generaNumeroAleatorio(3);
+
+		for (int i = 0; i < 2; i++)
+			result += pattern.charAt(rnd.nextInt(pattern.length()));
+		for (int i = 0; i < 5; i++)
+			result += pattern2.charAt(rnd.nextInt(pattern2.length()));
+
+		Poll poll = pollRepository.findByCode(result);
+
+		if (poll != null) {
+			result = "";
+			result = this.codeGenerator();
+		}
+
+		return result;
+	}
+
+}

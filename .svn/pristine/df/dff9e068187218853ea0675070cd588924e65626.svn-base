@@ -1,0 +1,28 @@
+
+package repositories;
+
+import java.util.Collection;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import domain.Poll;
+
+@Repository
+public interface PollRepository extends JpaRepository<Poll, Integer> {
+
+	@Query("select p from Poll p where p.ticker = ?1")
+	Poll findByCode(String code);
+
+	@Query("select p from Poll p where p.poller.id = ?1")
+	Collection<Poll> findAllMyPolls(int pollerId);
+
+	@Query("select p from Poll p, ConfigurationSystem cs where (p.title like %?1% or p.description like %?1% or p.ticker like %?1%) and p.questions is not empty and p.startActive < current_date() and ((p.endActive - p.startActive)/1000*60*60*24) >= cs.minimumPeriodActive")
+	Collection<Poll> findPollByKeyword(String keyWord);
+
+	//select p from Poll p, ConfigurationSystem cs where p.questions is not empty and (p.startActive < current_date()) and ((p.endActive - p.startActive)/1000*60*60*24) >= cs.minimumPeriodActive;
+	@Query("select p from Poll p, ConfigurationSystem cs where p.questions is not empty and (p.startActive < current_timestamp()) and ((p.endActive - p.startActive)/1000*60*60*24) >= cs.minimumPeriodActive")
+	Collection<Poll> findOnlyActives();
+
+}

@@ -1,0 +1,34 @@
+
+package forms;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.validation.Valid;
+
+import domain.Answer;
+
+public class PollForm {
+
+	public PollForm(int tam) {
+		super();
+		for (int i = 0; i < tam; i++) {
+			listOfAnswers.add(new Answer());
+		}
+
+	}
+
+
+	private Collection<Answer>	listOfAnswers	= new ArrayList<Answer>();
+
+
+	@Valid
+	public Collection<Answer> getListOfAnswers() {
+		return listOfAnswers;
+	}
+
+	public void setListOfAnswers(Collection<Answer> listOfAnswers) {
+		this.listOfAnswers = listOfAnswers;
+	}
+
+}

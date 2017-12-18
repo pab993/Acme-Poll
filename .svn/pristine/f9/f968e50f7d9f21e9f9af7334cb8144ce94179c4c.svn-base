@@ -1,0 +1,51 @@
+
+package forms;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import domain.Answer;
+import domain.Poll;
+
+public class PollForm {
+
+	public PollForm() {
+		super();
+	}
+
+	public PollForm(int tam, Poll poll) {
+		super();
+		for (int i = 0; i < tam; i++) {
+			listOfAnswers.add(new Answer());
+		}
+		pollId = poll.getId();
+
+	}
+
+
+	private Collection<Answer>	listOfAnswers	= new ArrayList<Answer>();
+	private int					pollId;
+
+
+	@Valid
+	public Collection<Answer> getListOfAnswers() {
+		return listOfAnswers;
+	}
+
+	public void setListOfAnswers(Collection<Answer> listOfAnswers) {
+		this.listOfAnswers = listOfAnswers;
+	}
+
+	@NotNull
+	public int getPollId() {
+		return pollId;
+	}
+
+	public void setPollId(int pollId) {
+		this.pollId = pollId;
+	}
+
+}

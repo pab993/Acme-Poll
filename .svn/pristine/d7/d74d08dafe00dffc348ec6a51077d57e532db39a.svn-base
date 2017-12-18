@@ -1,0 +1,68 @@
+
+package services;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import repositories.AnswerRepository;
+import domain.Answer;
+import domain.Poller;
+
+@Service
+@Transactional
+public class AnswerService {
+
+	//Managed repository
+
+	@Autowired
+	private AnswerRepository	answerRepository;
+
+	//Managed Services 
+
+	@Autowired
+	private PollerService		pollerService;
+
+
+	//CRUD methods 
+
+	public Answer save(Answer answer) {
+		Assert.notNull(answer);
+		Answer answerSaved = answerRepository.save(answer);
+		return answerSaved;
+	}
+
+	public void delete(Answer answer) {
+		Assert.notNull(answer);
+
+		Poller poller = pollerService.findByPrincipal();
+
+		Assert.isTrue(answer.getQuestion().getPoll().getPoller().getId() == poller.getId());
+
+		answerRepository.delete(answer);
+
+	}
+
+	//Other bussiness methods
+
+	public Collection<Answer> findAnswersOfAPoll(int pollId) {
+		Collection<Answer> answers;
+
+		answers = answerRepository.findAnswersOfAPoll(pollId);
+
+		return answers;
+	}
+
+	public Collection<Answer> findByQuestion(int questionId) {
+		// TODO Auto-generated method stub
+		Collection<Answer> answers;
+
+		answers = answerRepository.findByQuestion(questionId);
+
+		return answers;
+	}
+
+}

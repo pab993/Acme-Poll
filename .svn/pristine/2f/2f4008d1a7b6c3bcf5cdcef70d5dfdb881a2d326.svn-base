@@ -1,0 +1,195 @@
+
+package controllers;
+
+import java.util.Collection;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import services.AnswerService;
+import services.PollService;
+import services.PollerService;
+import domain.Answer;
+import domain.Poll;
+import domain.Poller;
+import forms.PollForm;
+
+@Controller
+@RequestMapping("/poll")
+public class PollController extends AbstractController {
+
+	//Services =======================================================================
+
+	@Autowired
+	private PollService		pollService;
+
+	@Autowired
+	private PollerService	pollerService;
+
+	@Autowired
+	private AnswerService	answerService;
+
+
+	//Listing ========================================================================
+
+	@RequestMapping(value = "/myList", method = RequestMethod.GET)
+	public ModelAndView myList() {
+		ModelAndView result;
+		Collection<Poll> polls;
+
+		Poller poller = pollerService.findByPrincipal();
+
+		polls = pollService.findAllMyPolls(poller.getId());
+
+		result = new ModelAndView("poll/list");
+		result.addObject("polls", polls);
+		result.addObject("requestURI", "poll/myList.do");
+
+		return result;
+	}
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView list() {
+		ModelAndView result;
+		Collection<Poll> polls;
+
+		polls = pollService.findAll();
+
+		result = new ModelAndView("poll/list");
+		result.addObject("polls", polls);
+		result.addObject("requestURI", "poll/list.do");
+
+		return result;
+	}
+
+	@RequestMapping(value = "/display", method = RequestMethod.GET)
+	public ModelAndView display(@RequestParam int pollId, @CookieValue(value = "hitCounter", defaultValue = "test") String hitCounter, HttpServletResponse response) {
+		ModelAndView result;
+		Poll poll;
+
+		poll = pollService.findOne(pollId);
+
+		if (poll == null) {
+
+			result = new ModelAndView("redirect:/panic/misc.do");
+
+		} else {
+
+			if (checkCookie(hitCounter, pollId)) {
+
+				result = new ModelAndView("redirect:/poll/accessDeny.do");
+
+			} else {
+
+				result = new ModelAndView("poll/display");
+				result.addObject("pollForm", new PollForm(poll.getQuestions().size(), poll));
+				result.addObject("poll", poll);
+				result.addObject("requestURI", "poll/display.do");
+
+			}
+		}
+
+		return result;
+	}
+
+	@RequestMapping(value = "/display", method = RequestMethod.POST, params = "save")
+	public ModelAndView save(PollForm pollForm, @CookieValue(value = "hitCounter", defaultValue = "test") String hitCounter, HttpServletResponse response, BindingResult binding) {
+		ModelAndView result;
+
+		//		pollService.reconstruct(pollForm, binding);
+
+		if (binding.hasErrors() || checkAnswers(pollForm)) {
+			result = createEditModelAndView(pollForm, "poll.commit.error");
+		} else {
+			try {
+
+				pollService.savePollAnswered(pollForm);
+
+				for (Answer answer : pollForm.getListOfAnswers()) {
+					hitCounter = hitCounter + "," + String.valueOf(answer.getQuestion().getPoll().getId());
+					break;
+				}
+
+				response.addCookie(new Cookie("hitCounter", hitCounter));
+				result = new ModelAndView("redirect:/poll/list.do");
+
+			} catch (Throwable oops) {
+
+				result = createEditModelAndView(pollForm, "poll.commit.error");
+			}
+		}
+		return result;
+	}
+
+	@RequestMapping("/accessDeny")
+	public ModelAndView accessDeny() {
+		ModelAndView result;
+
+		result = new ModelAndView("poll/accessDeny");
+
+		return result;
+	}
+
+	// Ancillary Methods
+	// ===============================================================================
+
+	protected ModelAndView createEditModelAndView(PollForm pollForm, int pollId) {
+		ModelAndView result;
+
+		result = createEditModelAndView(pollForm, null);
+		return result;
+	}
+
+	protected ModelAndView createEditModelAndView(PollForm pollForm, String message) {
+		ModelAndView result;
+
+		Poll poll = pollService.findOne(pollForm.getPollId());
+
+		result = new ModelAndView("poll/display");
+
+		result.addObject("message", message);
+		result.addObject("pollForm", new PollForm(poll.getQuestions().size(), poll));
+		result.addObject("poll", poll);
+		result.addObject("requestURI", "poll/display.do");
+
+		return result;
+	}
+
+	public Boolean checkCookie(String hitCounter, int pollId) {
+		Boolean res = false;
+		String id = String.valueOf(pollId);
+		String[] parts = hitCounter.split(",");
+		for (String subString : parts) {
+			if (subString.equals(id)) {
+				res = true;
+			}
+		}
+		return res;
+	}
+
+	public Boolean checkAnswers(PollForm pollForm) {
+		Boolean res = false;
+		if (pollForm.getListOfAnswers().isEmpty()) {
+			res = true;
+		} else {
+			for (Answer answer : pollForm.getListOfAnswers()) {
+				if (answer.getQuestion().getPoll().getQuestions().size() != pollForm.getListOfAnswers().size()) {
+					res = true;
+					break;
+				}
+			}
+		}
+
+		return res;
+	}
+
+}

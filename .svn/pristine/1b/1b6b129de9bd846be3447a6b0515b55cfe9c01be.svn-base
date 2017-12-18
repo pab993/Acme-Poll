@@ -1,0 +1,161 @@
+
+package services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import repositories.InstanceRepository;
+
+@Service
+@Transactional
+public class InstanceService {
+
+	//Managed Repository =============================================================================
+
+	@Autowired
+	private InstanceRepository	instanceRepository;
+
+	//Managed Services ===============================================================================
+
+	@Autowired
+	private PollService			pollService;
+
+	//Constructor methods ============================================================================
+
+	//Simple CRUD methods ============================================================================
+
+	//	public Instance create(int pollId) {
+	//		Instance result;
+	//
+	//		Poll poll = pollService.findOne(pollId);
+	//
+	//		result = new Instance();
+	//
+	//		Collection<Annotation> annotations = new ArrayList<Annotation>();
+	//		result.setAnnotations(annotations);
+	//		result.setGym(gym);
+	//
+	//		return result;
+	//	}
+	//
+	//	public Instance save(Instance instance) {
+	//		Assert.notNull(instance);
+	//
+	//		Manager manager = managerService.findByPrincipal();
+	//
+	//		Assert.isTrue(instance.getGym().getManager().equals(manager));
+	//		Instance result;
+	//
+	//		result = instanceRepository.save(instance);
+	//
+	//		return result;
+	//	}
+	//
+	//	public void delete(Instance instance) {
+	//		Assert.notNull(instance);
+	//
+	//		Manager manager = managerService.findByPrincipal();
+	//
+	//		Assert.isTrue(instance.getGym().getManager().equals(manager));
+	//
+	//		for (Step s : instance.getSteps()) {
+	//			stepService.delete(s);
+	//		}
+	//
+	//		for (Annotation a : instance.getAnnotations()) {
+	//			annotationService.delete(a);
+	//		}
+	//
+	//		instanceRepository.delete(instance);
+	//	}
+	//
+	//	public Instance findOne(int instanceId) {
+	//		// TODO Auto-generated method stub
+	//		Instance instance;
+	//
+	//		instance = instanceRepository.findOne(instanceId);
+	//
+	//		return instance;
+	//	}
+	//
+	//	public Collection<Instance> findAll() {
+	//		// TODO Auto-generated method stub
+	//		Collection<Instance> instances;
+	//
+	//		instances = instanceRepository.findAll();
+	//
+	//		return instances;
+	//	}
+	//
+	//	public Collection<Instance> findByGym(int gymId) {
+	//		Collection<Instance> instances;
+	//
+	//		instances = instanceRepository.findByGym(gymId);
+	//
+	//		return instances;
+	//	}
+	//
+	//	public Instance reconstruct(Instance instance, BindingResult binding) {
+	//		Instance result;
+	//
+	//		if (instance.getId() == 0) {
+	//			result = instance;
+	//			result.setGym(instance.getGym());
+	//			result.setDescription(instance.getDescription());
+	//			result.setTitle(instance.getTitle());
+	//			validator.validate(result, binding);
+	//		} else {
+	//			Instance res = instanceRepository.findOne(instance.getId());
+	//			result = instance;
+	//			result.setDescription(instance.getDescription());
+	//			result.setTitle(instance.getTitle());
+	//
+	//			result.setAnnotations(res.getAnnotations());
+	//			result.setGym(res.getGym());
+	//			result.setId(res.getId());
+	//			result.setVersion(res.getVersion());
+	//			result.setSteps(res.getSteps());
+	//
+	//			validator.validate(result, binding);
+	//		}
+	//
+	//		return result;
+	//	}
+	//
+	//	public Collection<Instance> findByKeyword(String keyword) {
+	//		Collection<Instance> instances = instanceRepository.findByKeyword(keyword);
+	//
+	//		return instances;
+	//	}
+	//
+	//	public Instance findByStep(int stepId) {
+	//		Instance instance = instanceRepository.findByStep(stepId);
+	//
+	//		return instance;
+	//	}
+	//
+	//	public Collection<Object[]> sixthQuery() {
+	//
+	//		Collection<Object[]> sixth = instanceRepository.sixthQuery();
+	//
+	//		return sixth;
+	//	}
+	//
+	//	public Collection<Instance> eighthQuery() {
+	//
+	//		Collection<Instance> eighth = instanceRepository.eighthQuery();
+	//
+	//		return eighth;
+	//	}
+	//
+	//	public Collection<Instance> findAllOpened() {
+	//
+	//		Collection<Instance> findAllOpened = instanceRepository.findAllOpened();
+	//
+	//		return findAllOpened;
+	//	}
+	//
+	//}
+
+}
